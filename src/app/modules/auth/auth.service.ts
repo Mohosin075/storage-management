@@ -14,7 +14,7 @@ export const registerUser = async (
   const user = new User(userInfo);
 
   await user.save();
-  return { message: "User created successfully" };
+    return { message: "User created successfully" };
 };
 
 export const loginUser = async (email: string, password: string) => {
