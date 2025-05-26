@@ -11,7 +11,7 @@ mongoose
   .connect(uri)
   .then(() => {
     app.get("/", (req, res) => {
-      res.send("Welcome to the Storage Management System!");
+      res.send({ message: "Welcome to the Storage Management System!" });
     });
     console.log("MongoDB connected");
     app.listen(port, () => {

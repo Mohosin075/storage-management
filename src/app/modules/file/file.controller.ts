@@ -35,7 +35,7 @@ const createFile = async (req: Request, res: Response): Promise<void> => {
   const title = req.body.title || req.file.originalname;
 
   try {
-    const fileUrl = `http://localhost:5000/${req.file.path.replace(
+    const fileUrl = `https://storage-management.onrender.com/${req.file.path.replace(
       /\\/g,
       "/"
     )}`;
