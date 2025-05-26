@@ -1,6 +1,7 @@
-import { Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import File from "./file.model";
 import { IFile } from "./file.interface";
+import folderModel from "../folder/folder.model";
 
 interface CreateFileDTO {
   title: string;
@@ -36,12 +37,24 @@ export const deleteFileService = async (
   return await File.findOneAndDelete({ _id: fileId, userId });
 };
 
-export const updateFileService = async (
-  fileId: string,
-  userId: Types.ObjectId,
-  data: Partial<{ title: string }>
-): Promise<IFile | null> => {
-  return await File.findOneAndUpdate({ _id: fileId, userId }, data, {
-    new: true,
+// for resent
+export const getRecentItemsService = async (userId: string) => {
+  const files = await File.find({ userId })
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .lean();
+  const folders = await folderModel
+    .find({ userId })
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .lean();
+
+  const combined = [...files, ...folders];
+
+  combined.sort((a, b) => {
+    const aTime = new Date(a.createdAt ?? 0).getTime();
+    const bTime = new Date(b.createdAt ?? 0).getTime();
+    return bTime - aTime;
   });
+  return combined.slice(0, 10);
 };

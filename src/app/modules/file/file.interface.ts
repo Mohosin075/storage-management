@@ -9,3 +9,4 @@ export interface IFile extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+

@@ -3,7 +3,7 @@ import {
   createFileService,
   deleteFileService,
   getFilesService,
-  updateFileService,
+  getRecentItemsService,
 } from "./file.service";
 import { AuthRequest } from "../../../../express";
 import mongoose from "mongoose";
@@ -109,45 +109,6 @@ const getFiles = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
-const updateFile = async (req: Request, res: Response): Promise<void> => {
-  const authReq = getAuthReq(req);
-
-  if (!authReq.user) {
-    res.status(401).json({ status: false, message: "Unauthorized" });
-    return;
-  }
-
-  const fileId = req.params.id;
-  const { title } = req.body;
-
-  if (!title) {
-    res.status(400).json({ status: false, message: "Title is required" });
-    return;
-  }
-
-  try {
-    const updated = await updateFileService(fileId, authReq.user._id, {
-      title,
-    });
-
-    if (!updated) {
-      res.status(404).json({ status: false, message: "File not found" });
-      return;
-    }
-
-    res.status(200).json({
-      status: true,
-      message: "File updated successfully",
-      data: updated,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      status: false,
-      message: "Failed to update file",
-      error: error.message,
-    });
-  }
-};
 
 const deleteFile = async (req: Request, res: Response): Promise<void> => {
   const authReq = getAuthReq(req);
@@ -180,9 +141,38 @@ const deleteFile = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+// for recent items
+
+const getRecentItems = async (req: Request, res: Response): Promise<void> => {
+  const authReq = getAuthReq(req);
+
+  if (!authReq.user) {
+    res.status(401).json({ status: false, message: "Unauthorized" });
+    return;
+  }
+
+  try {
+    const recentItems = await getRecentItemsService(
+      authReq.user._id.toString()
+    );
+
+    res.status(200).json({
+      status: true,
+      message: "Recent files and folders fetched successfully",
+      data: recentItems,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      status: false,
+      message: "Failed to fetch recent items",
+      error: error.message,
+    });
+  }
+};
+
 export const fileController = {
   createFile,
   getFiles,
-  updateFile,
   deleteFile,
+  getRecentItems,
 };
