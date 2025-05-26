@@ -10,20 +10,21 @@ import {
 // Create folder
 const createFolder = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user)
-      return res.status(401).json({ status: false, message: "Unauthorized" });
+    if (!req.user) {
+      res.status(401).json({ status: false, message: "Unauthorized" });
+      return;
+    }
 
     const { name, parentFolder } = req.body;
-
     const folder = await createFolderService(name, req.user._id, parentFolder);
 
-    return res.status(201).json({
+    res.status(201).json({
       status: true,
       message: "Folder created successfully",
       data: folder,
     });
   } catch (error: any) {
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to create folder",
       error: error.message,
@@ -34,20 +35,21 @@ const createFolder = async (req: AuthRequest, res: Response) => {
 // Get folders
 const getFolders = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user)
-      return res.status(401).json({ status: false, message: "Unauthorized" });
+    if (!req.user) {
+      res.status(401).json({ status: false, message: "Unauthorized" });
+      return;
+    }
 
     const parentFolder = req.query.parentId as string | undefined;
-
     const folders = await getFoldersService(req.user._id, parentFolder || null);
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Folders fetched successfully",
       data: folders,
     });
   } catch (error: any) {
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to get folders",
       error: error.message,
@@ -58,33 +60,39 @@ const getFolders = async (req: AuthRequest, res: Response) => {
 // Update folder
 const updateFolder = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user)
-      return res.status(401).json({ status: false, message: "Unauthorized" });
+    if (!req.user) {
+      res.status(401).json({ status: false, message: "Unauthorized" });
+      return;
+    }
 
     const folderId = req.params.id;
     const { name } = req.body;
 
-    if (!name)
-      return res.status(400).json({
+    if (!name) {
+      res.status(400).json({
         status: false,
         message: "Folder name is required",
       });
+      return;
+    }
 
     const updated = await updateFolderService(folderId, req.user._id, name);
 
-    if (!updated)
-      return res.status(404).json({
+    if (!updated) {
+      res.status(404).json({
         status: false,
         message: "Folder not found",
       });
+      return;
+    }
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Folder updated successfully",
       data: updated,
     });
   } catch (error: any) {
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to update folder",
       error: error.message,
@@ -95,24 +103,28 @@ const updateFolder = async (req: AuthRequest, res: Response) => {
 // Delete folder
 const deleteFolder = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user)
-      return res.status(401).json({ status: false, message: "Unauthorized" });
+    if (!req.user) {
+      res.status(401).json({ status: false, message: "Unauthorized" });
+      return;
+    }
 
     const folderId = req.params.id;
     const deleted = await deleteFolderService(folderId, req.user._id);
 
-    if (!deleted)
-      return res.status(404).json({
+    if (!deleted) {
+      res.status(404).json({
         status: false,
         message: "Folder not found",
       });
+      return;
+    }
 
-    return res.status(200).json({
+    res.status(200).json({
       status: true,
       message: "Folder deleted successfully",
     });
   } catch (error: any) {
-    return res.status(500).json({
+    res.status(500).json({
       status: false,
       message: "Failed to delete folder",
       error: error.message,
