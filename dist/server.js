@@ -9,11 +9,15 @@ const app_1 = __importDefault(require("./app"));
 dotenv_1.default.config();
 const port = process.env.PORT || 5000;
 const uri = process.env.DATABASE_URL;
-mongoose_1.default.connect(uri)
+mongoose_1.default
+    .connect(uri)
     .then(() => {
-    console.log('MongoDB connected');
+    app_1.default.get("/", (req, res) => {
+        res.send({ message: "Welcome to the Storage Management System!" });
+    });
+    console.log("MongoDB connected");
     app_1.default.listen(port, () => {
         console.log(`Server is running on port ${port}`);
     });
 })
-    .catch(err => console.error('DB Connection Error:', err));
+    .catch((err) => console.error("DB Connection Error:", err));
