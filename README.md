@@ -80,6 +80,7 @@ cd storage-management-system
 ```bash
 npm install
 ```
+
 note : update .env.local file
 ```bash
 npm run dev
